@@ -4,10 +4,14 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import org.junit.jupiter.api.Test;
 import static telran.Arrays.*;
+
+import java.util.Random;
+
 import telran.Arrays;
 
 public class ArrayTest {
 
+    private static final int N_ELEMENTS = 1000;
     int[] numbers= {10,7,12,-4,13,3,14};
     @Test 
     void searchTest(){
@@ -68,6 +72,83 @@ public class ArrayTest {
         int[] expectedArray = {10, 7, 12, -4, 13, 3};
         assertArrayEquals(expectedArray, remove(originalArray, index));
     }
+    @Test 
+    void testSort(){
+    int[] testNumbers= java.util.Arrays.copyOf(numbers, numbers.length);
+    sort(testNumbers);
+    int [] expected ={-4,3,7,10,12,13,14};
+     }
+    @Test
+    void sortTestRandomArray(){
+        int[] array = getRandomArray(N_ELEMENTS);            
+        int limit = array.length -1;
+        sort(array);
+        for(int i = 0 ; i < limit ; i++){
+            assertTrue(array[i] <= array[i+1]);
+        }
+    }
+    private int[] getRandomArray(int nElements) {
+        int [] res = new int[nElements];
+        Random random = new Random();
+        for(int i=0; i<nElements; i++){
+            res[i]= random.nextInt();
+        }
+        return res;
+    }
+    @Test 
+    void testBinarySearch(){
+        int[] sortedArray = {2,3,4,5};
+        assertEquals(0, binarySearch(sortedArray, 2));
+        assertEquals(3, binarySearch(sortedArray, 5));
+        assertEquals(-1, binarySearch(sortedArray, -2));
+        assertEquals(-1, binarySearch(sortedArray, 0));
 
+    }
+    @Test
+    void testInsertAtBeginning() {
+        int[] sortedArray = {2, 3, 4, 5};
+        int number = 1;
+        int[] expected = {1, 2, 3, 4, 5};
+        assertArrayEquals(expected, insertSorted(sortedArray, number));
+    }
+    @Test
+    void testInsertInMiddle() {
+        int[] sortedArray = {1, 2, 4, 5};
+        int number = 3;
+        int[] expected = {1, 2, 3, 4, 5};
+        assertArrayEquals(expected, insertSorted(sortedArray, number));
+    }
+    @Test
+    void testInsertAtEnd() {
+        int[] sortedArray = {1, 2, 3, 4};
+        int number = 5;
+        int[] expected = {1, 2, 3, 4, 5};
+        assertArrayEquals(expected, insertSorted(sortedArray, number));
+    }
+    @Test
+    void testInsertDuplicate() {
+        int[] sortedArray = {1, 2, 3, 4};
+        int number = 3;
+        int[] expected = {1, 2, 3, 3, 4};
+        assertArrayEquals(expected, insertSorted(sortedArray, number));
+    }
+    @Test
+    void testInsertIntoEmptyArray() {
+        int[] sortedArray = {};
+        int number = 1;
+        int[] expected = {1};
+        assertArrayEquals(expected, insertSorted(sortedArray, number));
+    }
+    @Test
+    void testBooleanSwap(){
+        assertTrue(isOneSwap(new int[]{1, 3, 2, 4}));
+        assertTrue(isOneSwap(new int[]{4, 2, 3, 1}));
+        assertFalse(isOneSwap(new int[]{1, 2, 3, 4}));
+        assertFalse(isOneSwap(new int[]{4, 3, 2, 1}));
+        assertTrue(isOneSwap(new int[]{3, 3, 2, 3, 3}));
+        assertTrue(isOneSwap(new int[]{2, 1}));
+        assertFalse(isOneSwap(new int[]{1, 2}));
+        assertFalse(isOneSwap(new int[]{2, 3, 1}));
 
+    }
 }
