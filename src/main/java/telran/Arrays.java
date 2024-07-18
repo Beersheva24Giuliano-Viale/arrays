@@ -1,107 +1,208 @@
 package telran;
 
-import java.lang.reflect.Array;
+import java.util.Comparator;
 
 public class Arrays {
-
-    public static int search(int[] array, int key){
-        int i = 0;
-        while (i<array.length && key != array[i]) {
-            
-            i++;
+    public static int search(int[] ar, int key) {
+        int index = 0;
+        while (index < ar.length && key != ar[index]) {
+            index++;
         }
-        return i==array.length ? -1 : i;
-
+        return index == ar.length ? -1 : index;
     }
-    public static int[] addNumber(int[] array, int number){
 
-        int [] result =java.util.Arrays.copyOf(array, array.length+1);
-        result[array.length]= number;
-        return result;
+    public static int[] add(int[] ar, int number) {
+        int[] res = java.util.Arrays.copyOf(ar, ar.length + 1);
+        res[ar.length] = number;
+        return res;
     }
+
+    /**
+     * 
+     * @param ar
+     * @param index
+     * @param number
+     * @return reference to a new array containing @param number at @param index
+     */
     public static int[] insert(int[] ar, int index, int number) {
-        if (ar == null || ar.length == 0) {
-            throw new IllegalArgumentException("Array is null or empty");
-        }
-        int[] newArray = new int[ar.length+1];
-        System.arraycopy(ar, 0, newArray, 0, index);
-        newArray[index] = number;
-        System.arraycopy(ar, index, newArray, index + 1, ar.length - index);
-        return newArray; 
+        // creates new array with all elements from the given "ar" and
+        // the given "number" at the given index
+        // to apply System.arraycopy method
+        int[] res = java.util.Arrays.copyOf(ar, ar.length + 1);
+        System.arraycopy(ar, index, res, index + 1, ar.length - index);
+        res[index] = number;
+        return res;
     }
+
+    /**
+     * 
+     * @param numbers
+     * @param index
+     * @return new array with no removed from @param numbers number at @param index
+     */
     public static int[] remove(int[] numbers, int index) {
-        if (numbers == null || index < 0 || index >= numbers.length) {
-            throw new IllegalArgumentException("Array is null or index is out of bounds");
-        } 
-        int[] newArray = new int[numbers.length - 1];        
-        System.arraycopy(numbers, 0, newArray, 0, index);        
-        System.arraycopy(numbers, index + 1, newArray, index, numbers.length - index - 1);        
-        return newArray;
+        // creates new array with no element in "numbers" at "index"
+        // to apply System.arraycopy method
+        int[] res = java.util.Arrays.copyOf(numbers, numbers.length - 1);
+        System.arraycopy(numbers, index + 1, res, index, res.length - index);
+        return res;
+
     }
-    private static boolean pushMaxAtEnd(int[] array, int lenght){
+
+    private static boolean pushMaxAtEnd(int[] ar, int length) {
         boolean res = true;
-        for(int i =0; i<lenght;i++){
-            if (array[i]>array[i+1]) {
-                res=false;
-                swap(array,i,i+1);
+        for (int i = 0; i < length; i++) {
+            if (ar[i] > ar[i + 1]) {
+                res = false;
+                swap(ar, i, i + 1);
             }
         }
         return res;
     }
-    private static void swap(int[] array, int i, int j) {
-        int tmp = array[i];
-        array[i]= array[j];
-        array[j] = tmp;  
+
+    private static void swap(int[] ar, int i, int j) {
+        int tmp = ar[i];
+        ar[i] = ar[j];
+        ar[j] = tmp;
     }
-   public static void sort (int [] array){
-    int lenght = array.length;
-    boolean flagSorted=false;
-    while (!flagSorted) {
-        lenght--;
-        flagSorted=pushMaxAtEnd(array, lenght);
-    }
-   }
-public static int binarySearch(int[] ar, int number) {
-    int low = 0;
-    int high = ar.length - 1;
-    while (low <= high) {
-        int midIndex = low + (high-low) / 2;
-        if (ar[midIndex] == number) {
-            return midIndex;
-        }
-        if (ar[midIndex] < number) {
-            low = midIndex + 1;
-        } else {
-            high = midIndex - 1;
+
+    public static void sort(int[] ar) {
+        int length = ar.length;
+        boolean flSorted = false;
+        while (!flSorted) {
+            length--;
+            flSorted = pushMaxAtEnd(ar, length);
         }
     }
-    return -1;
-}
-public static int[] insertSorted(int[] arSorted, int number) {
-    int[] newArray = new int[arSorted.length + 1];
-    int i = 0;
-    while (i < arSorted.length && arSorted[i] < number) {
-        i++;
-    }
-    for (int j = 0; j < i; j++) {
-        newArray[j] = arSorted[j];
-    }
-    newArray[i] = number;
-    for (int j = i; j < arSorted.length; j++) {
-        newArray[j + 1] = arSorted[j];
-    }
-    return newArray;
-}
-public static boolean isOneSwap(int[] array) {
-    int[] sortedArray = array.clone(); //found a method that clones the array
-    //int[] sortedArray = java.util.Arrays.copyOf(array,array.length);
-    sort(sortedArray);
-    int count = 0;
-    for (int i = 0; i < array.length; i++) {
-        if (array[i] != sortedArray[i]) {
-            count++;
+
+    /**
+     * 
+     * @param ar  - sorted array
+     * @param key - being searched number
+     * @return see comments definition
+     */
+    public static int binarySearch(int[] ar, int key) {
+        // index of the search key, if it is contained in the array;
+        // otherwise, (-(insertion point) - 1).
+        // The insertion point is defined as the point at which the key would be
+        // inserted into
+        // the array: the index of the first element greater than the key, or a.length
+        // if all elements in the array are less than the specified key. Note that this
+        // guarantees that the return value will be >= 0 if and only if the key is
+        // found.
+        int left = 0;
+        int right = ar.length - 1;
+        int middle = (left + right) / 2;
+        while (left <= right && ar[middle] != key) {
+            if (key < ar[middle]) {
+                right = middle - 1;
+            } else {
+                left = middle + 1;
+            }
+            middle = (left + right) / 2;
         }
+        return left > right ? -(left + 1) : middle;
     }
-    return count == 2;
-}
+
+    public static int[] insertSorted(int[] arSorted, int number) {
+        // arSorted is sorted array
+        // to insert number at index to keep the array sorted
+        // additional sorting is disallowed
+        int index = binarySearch(arSorted, number);
+        if (index < 0) {
+            index = -index - 1;
+        }
+        return insert(arSorted, index, number);
+    }
+
+    public static boolean isOneSwap(int[] array) {
+        // return true if a given array has exactly one swap to get sorted array
+        // the swaped array's elements may or may not be neighbors
+        boolean res = false;
+        int index1 = -1;
+        int index2 = 0;
+        index1 = getFirstIndex(array);
+        if (index1 > -1) {
+            index2 = getSecondIndex(array, index1);
+            res = isOneSwapCheck(array, index1, index2);
+        }
+        return res;
+
+    }
+
+    private static boolean isOneSwapCheck(int[] array, int index1, int index2) {
+        swap(array, index1, index2);
+        boolean res = isArraySorted(array);
+        swap(array, index2, index1); // array restored after swap
+        return res;
+    }
+
+    private static boolean isArraySorted(int[] array) {
+        int index = 1;
+        while (index < array.length && array[index] >= array[index - 1]) {
+            index++;
+        }
+        return index == array.length;
+    }
+
+    private static int getSecondIndex(int[] array, int index1) {
+        int index = array.length - 1;
+        int lowBorder = index1 + 1;
+        while (index > lowBorder && array[index] >= array[index1]) {
+            index--;
+        }
+
+        return index;
+
+    }
+
+    private static int getFirstIndex(int[] array) {
+        int index = 0;
+        int limit = array.length - 1;
+        while (index < limit && array[index] <= array[index + 1]) {
+            index++;
+        }
+        return index == limit ? -1 : index;
+    }
+
+    public static <T> void sort(T[] array, Comparator<T> comparator) {
+        int length = array.length;
+        boolean flSort = false;
+        do {
+            length--;
+            flSort = true;
+            for (int i = 0; i < length; i++) {
+                if (comparator.compare(array[i], array[i + 1]) > 0) {
+                    swap(array, i, i + 1);
+                    flSort = false;
+                }
+            }
+        } while (!flSort);
+    }
+
+    private static <T> void swap(T[] array, int i, int j) {
+        T tmp = array[i];
+        array[i] = array[j];
+        array[j] = tmp;
+    }
+
+    public static <T> int binarySearch(T[] array, T key, Comparator<T> comp) {
+        int left = 0;
+        int right = array.length - 1;
+
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            int comparison = comp.compare(array[mid], key);
+
+            if (comparison == 0) {
+                return mid;
+            } else if (comparison < 0) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+
+        return -1;
+    }
 }
