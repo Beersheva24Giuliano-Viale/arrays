@@ -1,6 +1,7 @@
-package telran;
+package telran.util;
 
 import java.util.Comparator;
+import java.util.function.Predicate;
 
 public class Arrays {
     public static int search(int[] ar, int key) {
@@ -184,25 +185,82 @@ public class Arrays {
         T tmp = array[i];
         array[i] = array[j];
         array[j] = tmp;
+
     }
 
     public static <T> int binarySearch(T[] array, T key, Comparator<T> comp) {
         int left = 0;
         int right = array.length - 1;
-
-        while (left <= right) {
-            int mid = left + (right - left) / 2;
-            int comparison = comp.compare(array[mid], key);
-
-            if (comparison == 0) {
-                return mid;
-            } else if (comparison < 0) {
-                left = mid + 1;
+        int middle = (left + right) / 2;
+        int compRes = 0;
+        while (left <= right && (compRes = comp.compare(key, array[middle])) != 0) {
+            if (compRes < 0) {
+                right = middle - 1;
             } else {
-                right = mid - 1;
+                left = middle + 1;
+            }
+            middle = (left + right) / 2;
+        }
+        return left > right ? -(left + 1) : middle;
+
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T> int binarySearch(T[] array, T key) {
+        // The code should be based on binarySearch with comparator
+        return binarySearch(array, key, (Comparator<T>) Comparator.naturalOrder());
+    }
+
+    public static <T> T[] insert(T[] array, int index, T item) {
+        T[] res = java.util.Arrays.copyOf(array, array.length + 1);
+        System.arraycopy(array, index, res, index + 1, array.length - index);
+        res[index] = item;
+        return res;
+    }
+
+    public static <T> T[] find(T[] array, Predicate<T> predicate) {
+        T[] result = java.util.Arrays.copyOf(array, 0);
+        for (int i = 0; i < array.length; i++) {
+            if (predicate.test(array[i])) {
+                result = insert(result, result.length, array[i]);
             }
         }
+        return result;
+    }
 
-        return -1;
+    public static <T> T[] removeIf(T[] array, Predicate<T> predicate) {
+
+        return find(array, predicate.negate());
+    }
+
+    /**
+     * 
+     * @param chars         - array of char primitives
+     * @param mustBeRules   - array of rules that must be true
+     * @param mustNotBeRule array of rules that must be false
+     * @return empty error message if array of chars matches all rules otherwise
+     *         specific error message saying what rules don't match
+     */
+    public static String matchesRules(char[] chars, CharacterRule[] mustBeRules, CharacterRule[] mustNotBeRules) {
+        for (CharacterRule rule : mustBeRules) {
+            boolean rulePassed = false;
+            for (char c : chars) {
+                if (rule.predicate.test(c)) {
+                    rulePassed = true;
+                    break;
+                }
+            }
+            if (!rulePassed) {
+                return rule.errorMessage;
+            }
+        }
+        for (char c : chars) {
+            for (CharacterRule rule : mustNotBeRules) {
+                if (rule.predicate.test(c)) {
+                    return rule.errorMessage;
+                }
+            }
+        }
+        return "";
     }
 }
