@@ -184,7 +184,7 @@ void evenOddSorting() {
         assertArrayEquals(expected, actual);
 
     }
-    @Test
+    @Test // testmatches
     void testMatchesRules() {
         CharacterRule mustBeUpperCase = new CharacterRule(true, Character::isUpperCase, "Must contain at least one uppercase letter.");
         CharacterRule mustBeLowerCase = new CharacterRule(true, Character::isLowerCase, "Must contain at least one lowercase letter.");
