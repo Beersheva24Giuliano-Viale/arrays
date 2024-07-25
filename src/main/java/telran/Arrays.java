@@ -242,25 +242,36 @@ public class Arrays {
      *         specific error message saying what rules don't match
      */
     public static String matchesRules(char[] chars, CharacterRule[] mustBeRules, CharacterRule[] mustNotBeRules) {
-        for (CharacterRule rule : mustBeRules) {
-            boolean rulePassed = false;
-            for (char c : chars) {
-                if (rule.predicate.test(c)) {
-                    rulePassed = true;
-                    break;
+            int i = 0;
+            while (i < mustBeRules.length) {
+                CharacterRule rule = mustBeRules[i];
+                boolean rulePassed = false;
+                int j = 0;
+                while (j < chars.length) {
+                    if (rule.predicate.test(chars[j])) {
+                        rulePassed = true;
+                        break;
+                    }
+                    j++;
                 }
-            }
-            if (!rulePassed) {
-                return rule.errorMessage;
-            }
-        }
-        for (char c : chars) {
-            for (CharacterRule rule : mustNotBeRules) {
-                if (rule.predicate.test(c)) {
+                if (!rulePassed) {
                     return rule.errorMessage;
                 }
+                i++;
             }
+            i = 0;
+            while (i < chars.length) {
+                char c = chars[i];
+                int k = 0;
+                while (k < mustNotBeRules.length) {
+                    CharacterRule rule = mustNotBeRules[k];
+                    if (rule.predicate.test(c)) {
+                        return rule.errorMessage;
+                    }
+                    k++;
+                }
+                i++;
+            }
+            return "";
         }
-        return "";
     }
-}
